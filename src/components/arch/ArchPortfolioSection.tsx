@@ -1,4 +1,5 @@
 import { useContentPick } from '../../hooks/useContentPick';
+import { ArchBeforeAfterCompare } from './ArchBeforeAfterCompare';
 
 export function ArchPortfolioSection() {
   const t = useContentPick();
@@ -52,36 +53,15 @@ export function ArchPortfolioSection() {
           </div>
         </div>
 
-        <div className="relative h-[500px] overflow-hidden rounded-xl border border-outline-variant shadow-lg md:col-span-12">
-          <div className="absolute inset-0 flex">
-            <div className="group relative h-full w-1/2">
-              <img
-                alt={t('portfolio.beforeImageAlt')}
-                className="h-full w-full object-cover grayscale"
-                src={t('portfolio.beforeImage')}
-              />
-              <div className="absolute left-4 top-4 rounded-md bg-primary px-3 py-1 text-label-caps text-on-primary">
-                {t('portfolio.beforeLabel')}
-              </div>
-            </div>
-            <div className="group relative h-full w-1/2">
-              <img
-                alt={t('portfolio.afterImageAlt')}
-                className="h-full w-full object-cover"
-                src={t('portfolio.afterImage')}
-              />
-              <div className="absolute right-4 top-4 rounded-md bg-secondary px-3 py-1 text-label-caps text-on-secondary">
-                {t('portfolio.afterLabel')}
-              </div>
-            </div>
-          </div>
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="relative h-full w-1 bg-secondary">
-              <div className="pointer-events-auto absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center rounded-full bg-secondary text-on-secondary shadow-xl">
-                <span className="material-symbols-outlined">unfold_more</span>
-              </div>
-            </div>
-          </div>
+        <div className="md:col-span-12">
+          <ArchBeforeAfterCompare
+            afterAlt={t('portfolio.afterImageAlt')}
+            afterLabel={t('portfolio.afterLabel')}
+            afterSrc={t('portfolio.afterImage')}
+            beforeAlt={t('portfolio.beforeImageAlt')}
+            beforeLabel={t('portfolio.beforeLabel')}
+            beforeSrc={t('portfolio.beforeImage')}
+          />
         </div>
 
         <div className="group relative h-[400px] overflow-hidden rounded-xl shadow-sm md:col-span-4">

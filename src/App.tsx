@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { ScrollToTop } from './components/ScrollToTop';
 import { ContentProvider } from './context/ContentContext';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
@@ -9,6 +10,7 @@ export default function App() {
   return (
     <ContentProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/o-nas" element={<AboutPage />} />

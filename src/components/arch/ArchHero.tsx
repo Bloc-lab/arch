@@ -33,9 +33,9 @@ export function ArchHero() {
           </div>
         </div>
       </div>
-      <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 animate-bounce flex-col items-center">
+      <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center">
         <span className="mb-2 text-label-caps text-on-primary/60">{t('hero.scrollHint')}</span>
-        <span className="material-symbols-outlined text-on-primary/60">expand_more</span>
+        <span className="material-symbols-outlined animate-bounce text-on-primary/60">expand_more</span>
       </div>
     </header>
   );
