@@ -10,6 +10,11 @@ export type CmsHttpError = {
   message: string;
 };
 
+export type CmsPreviewFetchOptions = {
+  /** Z session nebo z ?previewToken= v URL (stejný token pro content i site-settings). */
+  previewToken?: string | null;
+};
+
 function trimBaseUrl(url: string): string {
   return url.replace(/\/+$/, '');
 }
@@ -35,8 +40,17 @@ export function getCmsApiKey(): string {
   return String(key).trim();
 }
 
+function contentQueryString(lang: 'cs' | 'en', previewToken: string | null | undefined): string {
+  const params = new URLSearchParams();
+  params.set('lang', lang);
+  const t = typeof previewToken === 'string' ? previewToken.trim() : '';
+  if (t) params.set('previewToken', t);
+  return params.toString();
+}
+
 export async function fetchContent(
   lang: 'cs' | 'en',
+  options?: CmsPreviewFetchOptions,
 ): Promise<{ ok: true; data: ContentMap } | { ok: false; error: CmsHttpError }> {
   const configuredBase = cmsConfiguredBase();
   const base = getCmsApiBaseUrl();
@@ -53,7 +67,8 @@ export async function fetchContent(
     };
   }
 
-  const url = `${base}/api/v1/content?lang=${encodeURIComponent(lang)}`;
+  const qs = contentQueryString(lang, options?.previewToken);
+  const url = `${base}/api/v1/content?${qs}`;
   let response: Response;
   try {
     response = await fetch(url, {
@@ -109,16 +124,72 @@ export async function fetchContent(
   }
 }
 
-export async function fetchSiteInfo(): Promise<SiteInfo | null> {
-  if (!cmsConfiguredBase()) return null;
+/**
+ * Veřejná nastavení webu (barvy, šablona, …). S previewToken backend sloučí koncepty podle pravidel CMS.
+ */
+export async function fetchSiteSettings(
+  lang: 'cs' | 'en',
+  options?: CmsPreviewFetchOptions,
+): Promise<{ ok: true; data: SiteInfo } | { ok: false; error: CmsHttpError }> {
+  const configuredBase = cmsConfiguredBase();
   const base = getCmsApiBaseUrl();
+  const apiKey = getCmsApiKey();
 
-  const url = `${base}/api/v1/public/site-info`;
+  if (!configuredBase || !apiKey) {
+    return {
+      ok: false,
+      error: {
+        status: 0,
+        message:
+          'Chybí konfigurace API: nastavte VITE_PUBLIC_CMS_API_URL (nebo PUBLIC_CMS_API_URL) a VITE_CMS_API_KEY (nebo PUBLIC_CMS_API_KEY) v souboru .env.',
+      },
+    };
+  }
+
+  const qs = contentQueryString(lang, options?.previewToken);
+  const url = `${base}/api/v1/public/site-settings?${qs}`;
+  let response: Response;
   try {
-    const response = await fetch(url);
-    if (!response.ok) return null;
+    response = await fetch(url, {
+      headers: { 'X-API-KEY': apiKey },
+    });
+  } catch {
+    return {
+      ok: false,
+      error: {
+        status: 0,
+        message:
+          'Nepodařilo se spojit s CMS backendem (síťová chyba nebo špatná URL). Zkontrolujte VITE_PUBLIC_CMS_API_URL.',
+      },
+    };
+  }
+
+  if (!response.ok) {
+    const bodyText = await response.text().catch(() => '');
+    let detail = '';
+    try {
+      const j = JSON.parse(bodyText) as { message?: string; error?: string };
+      detail = j.message ?? j.error ?? '';
+    } catch {
+      detail = bodyText.slice(0, 200);
+    }
+    return {
+      ok: false,
+      error: {
+        status: response.status,
+        message: humanizeContentError(response.status, detail),
+      },
+    };
+  }
+
+  try {
     const data = (await response.json()) as unknown;
-    if (!data || typeof data !== 'object') return null;
+    if (!data || typeof data !== 'object') {
+      return {
+        ok: false,
+        error: { status: 500, message: 'Neočekávaný formát odpovědi API (site-settings).' },
+      };
+    }
     const siteName =
       typeof (data as { siteName?: unknown }).siteName === 'string'
         ? (data as { siteName: string }).siteName
@@ -130,14 +201,23 @@ export async function fetchSiteInfo(): Promise<SiteInfo | null> {
         : typeof logoRaw === 'string'
           ? logoRaw
           : null;
-    return { siteName: siteName.trim(), logoUrl };
+    return { ok: true, data: { siteName: siteName.trim(), logoUrl } };
   } catch {
-    return null;
+    return {
+      ok: false,
+      error: { status: 500, message: 'Nepodařilo se parsovat JSON z /api/v1/public/site-settings.' },
+    };
   }
 }
 
 function humanizeContentError(status: number, detail: string): string {
   const d = detail.trim();
+  if (status === 403 && /preview token expired/i.test(d)) {
+    return (
+      'Platnost odkazu náhledu vypršela (obvykle cca 1 hodina). ' +
+      'V administraci vygenerujte nový odkaz náhledu a otevřete stránku znovu s novým parametrem previewToken.'
+    );
+  }
   if (status === 401 || status === 403) {
     return (
       `Přístup odmítnut (${status}). Zkontrolujte platnost API klíče v X-API-KEY.` +

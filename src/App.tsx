@@ -8,8 +8,8 @@ import { PricingPage } from './pages/PricingPage';
 
 export default function App() {
   return (
-    <ContentProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <ContentProvider>
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -18,7 +18,7 @@ export default function App() {
           <Route path="/kontakt" element={<ContactPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
-    </ContentProvider>
+      </ContentProvider>
+    </BrowserRouter>
   );
 }
