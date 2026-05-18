@@ -111,11 +111,15 @@ export async function fetchContent(
 
 export async function fetchSiteInfo(): Promise<SiteInfo | null> {
   if (!cmsConfiguredBase()) return null;
-  const base = getCmsApiBaseUrl();
+  const apiKey = getCmsApiKey();
+  if (!apiKey) return null;
 
+  const base = getCmsApiBaseUrl();
   const url = `${base}/api/v1/public/site-info`;
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: { 'X-API-KEY': apiKey, Accept: 'application/json' },
+    });
     if (!response.ok) return null;
     const data = (await response.json()) as unknown;
     if (!data || typeof data !== 'object') return null;
