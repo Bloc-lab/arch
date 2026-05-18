@@ -7,7 +7,9 @@ export function ApiStatusBanner() {
 
   const { status, message } = state.error;
   const title =
-    status === 401 || status === 403
+    /platnost odkazu náhledu/i.test(message)
+      ? 'Vypršel náhled'
+      : status === 401 || status === 403
       ? 'Chyba oprávnění'
       : status >= 500
         ? 'Chyba serveru'

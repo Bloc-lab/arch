@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   fetchContent,
   fetchSiteInfo,
@@ -14,6 +15,7 @@ import {
   type CmsHttpError,
   type SiteInfo,
 } from '../lib/cms';
+import { getEffectivePreviewToken, readLangFromSearch } from '../lib/previewParams';
 
 export type Lang = 'cs' | 'en';
 
@@ -27,13 +29,22 @@ type ContentContextValue = {
   setLang: (lang: Lang) => void;
   state: ContentState;
   siteInfo: SiteInfo | null;
+  /** Efektivní token pro náhled (URL nebo session po navigaci v SPA). */
+  previewToken: string | null;
   refetch: () => void;
 };
 
 const ContentContext = createContext<ContentContextValue | null>(null);
 
+function initialLangFromUrl(): Lang {
+  if (typeof window === 'undefined') return 'cs';
+  const l = readLangFromSearch(window.location.search);
+  return l ?? 'cs';
+}
+
 export function ContentProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>('cs');
+  const location = useLocation();
+  const [lang, setLang] = useState<Lang>(initialLangFromUrl);
   const [state, setState] = useState<ContentState>({
     status: 'idle',
     data: null,
@@ -41,38 +52,50 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   });
   const [siteInfo, setSiteInfo] = useState<SiteInfo | null>(null);
 
+  const previewToken = useMemo(
+    () => getEffectivePreviewToken(location.search),
+    [location.search],
+  );
+
+  useEffect(() => {
+    const fromUrl = readLangFromSearch(location.search);
+    if (fromUrl) setLang(fromUrl);
+  }, [location.search]);
+
   const load = useCallback(async () => {
     setState((s) => ({
       status: 'loading',
       data: s.data,
       error: null,
     }));
-    const result = await fetchContent(lang);
-    if (result.ok) {
-      setState({ status: 'ready', data: result.data, error: null });
-    } else {
+    const token = getEffectivePreviewToken(location.search);
+    const [contentResult, settingsResult] = await Promise.all([
+      fetchContent(lang, { previewToken: token }),
+      fetchSiteInfo(lang, { previewToken: token }),
+    ]);
+    if (!contentResult.ok) {
       setState((s) => ({
         status: 'error',
         data: s.data,
-        error: result.error,
+        error: contentResult.error,
       }));
+      return;
     }
-  }, [lang]);
+    if (!settingsResult.ok) {
+      setState((s) => ({
+        status: 'error',
+        data: s.data,
+        error: settingsResult.error,
+      }));
+      return;
+    }
+    setState({ status: 'ready', data: contentResult.data, error: null });
+    setSiteInfo(settingsResult.data);
+  }, [lang, location.search]);
 
   useEffect(() => {
     void load();
   }, [load]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      const info = await fetchSiteInfo();
-      if (!cancelled && info) setSiteInfo(info);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const value = useMemo<ContentContextValue>(
     () => ({
@@ -80,9 +103,10 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       setLang,
       state,
       siteInfo,
+      previewToken,
       refetch: load,
     }),
-    [lang, state, siteInfo, load],
+    [lang, state, siteInfo, previewToken, load],
   );
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
