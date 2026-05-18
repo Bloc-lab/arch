@@ -28,6 +28,8 @@ type ContentContextValue = {
   lang: Lang;
   setLang: (lang: Lang) => void;
   state: ContentState;
+  /** Načítání obsahu z CMS (první load nebo změna jazyka). */
+  loading: boolean;
   siteInfo: SiteInfo | null;
   /** Efektivní token pro náhled (URL nebo session po navigaci v SPA). */
   previewToken: string | null;
@@ -97,16 +99,19 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     void load();
   }, [load]);
 
+  const loading = state.status === 'idle' || state.status === 'loading';
+
   const value = useMemo<ContentContextValue>(
     () => ({
       lang,
       setLang,
       state,
+      loading,
       siteInfo,
       previewToken,
       refetch: load,
     }),
-    [lang, state, siteInfo, previewToken, load],
+    [lang, state, loading, siteInfo, previewToken, load],
   );
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;

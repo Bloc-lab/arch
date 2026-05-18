@@ -1,15 +1,11 @@
-import { ApiStatusBanner } from '../components/ApiStatusBanner';
 import { ArchSiteFooter } from '../components/arch/ArchSiteFooter';
-import { ArchSiteNav } from '../components/arch/ArchSiteNav';
 import { useContentPick } from '../hooks/useContentPick';
 
 export function AboutPage() {
   const t = useContentPick();
 
   return (
-    <div className="min-h-screen bg-surface font-sans text-on-background antialiased">
-      <ArchSiteNav />
-      <ApiStatusBanner />
+    <>
       <section className="mx-auto max-w-3xl px-8 pb-24 pt-32">
         <p className="mb-3 text-label-caps text-secondary">{t('nav.about')}</p>
         <h1 className="mb-8 text-headline-xl text-primary">{t('nav.about')}</h1>
@@ -19,6 +15,6 @@ export function AboutPage() {
         </p>
       </section>
       <ArchSiteFooter />
-    </div>
+    </>
   );
 }

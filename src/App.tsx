@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { ArchLayout } from './components/ArchLayout';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ContentProvider } from './context/ContentContext';
 import { AboutPage } from './pages/AboutPage';
@@ -12,10 +13,12 @@ export default function App() {
       <ContentProvider>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/o-nas" element={<AboutPage />} />
-          <Route path="/cenik" element={<PricingPage />} />
-          <Route path="/kontakt" element={<ContactPage />} />
+          <Route element={<ArchLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/o-nas" element={<AboutPage />} />
+            <Route path="/cenik" element={<PricingPage />} />
+            <Route path="/kontakt" element={<ContactPage />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ContentProvider>

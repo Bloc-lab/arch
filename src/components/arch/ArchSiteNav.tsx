@@ -6,7 +6,7 @@ function cn(...parts: (string | false | undefined | null)[]): string {
   return parts.filter(Boolean).join(' ');
 }
 
-export function ArchSiteNav() {
+export function ArchSiteNav({ offsetTop = false }: { offsetTop?: boolean }) {
   const t = useContentPick();
   const { lang, setLang } = useContentContext();
   const { pathname } = useLocation();
@@ -36,7 +36,13 @@ export function ArchSiteNav() {
   const langBtnIdle = 'text-slate-600 dark:text-slate-300';
 
   return (
-    <header className={cn('fixed left-0 right-0 top-0 z-50 w-full border-b', shell)}>
+    <header
+      className={cn(
+        'fixed left-0 right-0 z-50 w-full border-b',
+        shell,
+        offsetTop ? 'top-10' : 'top-0',
+      )}
+    >
       <nav className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-8">
         <NavLink to="/" className={cn('flex min-w-0 items-center gap-3', logoClass)}>
           {logoUrl ? (

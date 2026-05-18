@@ -9,3 +9,34 @@
     'GRAD' 0,
     'opsz' 24;
 }
+
+/* Skeleton loading (shimmer) */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    105deg,
+    rgb(226 232 240) 0%,
+    rgb(248 250 252) 40%,
+    rgb(226 232 240) 80%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 2s ease-in-out infinite;
+}
+
+.dark .skeleton-shimmer {
+  background: linear-gradient(
+    105deg,
+    rgb(51 65 85) 0%,
+    rgb(71 85 105) 40%,
+    rgb(51 65 85) 80%
+  );
+  background-size: 200% 100%;
+}

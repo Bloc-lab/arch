@@ -24,3 +24,7 @@ export function readLangFromSearch(search: string): 'cs' | 'en' | null {
   const l = new URLSearchParams(search).get('lang');
   return l === 'cs' || l === 'en' ? l : null;
 }
+
+export function clearPreviewSession(): void {
+  sessionStorage.removeItem(STORAGE_PREVIEW_TOKEN);
+}
