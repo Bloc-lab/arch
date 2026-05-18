@@ -1,4 +1,3 @@
-import { ArchSiteFooter } from '../components/arch/ArchSiteFooter';
 import { useContentPick } from '../hooks/useContentPick';
 
 export function AboutPage() {
@@ -14,7 +13,6 @@ export function AboutPage() {
           Klíč API / seed: <code className="rounded bg-surface-container-high px-1">about.text</code>
         </p>
       </section>
-      <ArchSiteFooter />
     </>
   );
 }

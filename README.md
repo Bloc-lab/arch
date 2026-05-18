@@ -41,3 +41,12 @@ npm run preview
 | `/o-nas`| `about`    | `about.text`              |
 
 Branding v hlavičce: `admin.siteName`, `admin.logo` (nebo název/logo z `site-info`).
+
+## Obsah a CMS metadata
+
+| Co | Kde |
+|----|-----|
+| Texty na webu (fallback) | `src/content/arch-cs.json`, `arch-en.json` |
+| Labely polí, sekce a nápovědy v administraci | `weby/cms/packages/shared/src/arch-cms-config.ts` |
+
+V tomto repu **není** kopie `arch-cms-config` — admin bere metadata jen ze shared balíčku v CMS monorepu.

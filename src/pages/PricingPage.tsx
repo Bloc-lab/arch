@@ -1,5 +1,4 @@
 import { ArchPricingFinalCta } from '../components/arch/pricing/ArchPricingFinalCta';
-import { ArchPricingFooter } from '../components/arch/pricing/ArchPricingFooter';
 import { ArchPricingHero } from '../components/arch/pricing/ArchPricingHero';
 import { ArchPricingJourney } from '../components/arch/pricing/ArchPricingJourney';
 import { ArchPricingStandard } from '../components/arch/pricing/ArchPricingStandard';
@@ -14,7 +13,6 @@ export function PricingPage() {
       <ArchPricingTiers />
       <ArchPricingStandard />
       <ArchPricingFinalCta />
-      <ArchPricingFooter />
       </div>
     </div>
   );

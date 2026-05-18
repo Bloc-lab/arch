@@ -7,6 +7,7 @@ import {
   ArchContentSkeleton,
   type ArchSkeletonVariant,
 } from './skeleton/ArchContentSkeleton';
+import { ArchSiteFooter } from './arch/ArchSiteFooter';
 import { ArchFooterSkeleton } from './skeleton/ArchFooterSkeleton';
 import { ArchNavSkeleton } from './skeleton/ArchNavSkeleton';
 
@@ -74,7 +75,7 @@ export function ArchLayout() {
         )}
       </main>
 
-      {loading ? <ArchFooterSkeleton /> : null}
+      {loading ? <ArchFooterSkeleton /> : <ArchSiteFooter />}
     </div>
   );
 }

@@ -25,8 +25,8 @@ export function ArchSiteFooter() {
 
   return (
     <footer className="w-full border-t border-slate-200 bg-[#F9FAFB] py-20 dark:border-slate-800 dark:bg-slate-950">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-8 md:grid-cols-4">
-        <div className="md:col-span-1">
+      <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-10 px-8 sm:gap-12 md:grid-cols-3 md:gap-x-14 md:gap-y-12 lg:max-w-6xl lg:gap-x-20">
+        <div>
           <div className="mb-6 text-lg font-bold uppercase text-slate-900 dark:text-slate-50">
             {t('admin.siteName')}
           </div>
@@ -47,23 +47,6 @@ export function ArchSiteFooter() {
               ))}
             </div>
           ) : null}
-        </div>
-        <div>
-          <h4 className="mb-6 text-label-caps text-slate-900 dark:text-slate-50">{t('footer.columnExpertise')}</h4>
-          <ul className="space-y-4">
-            <li>
-              <OptionalHref href={t('footer.linkExp1Href')}>{t('footer.linkExp1')}</OptionalHref>
-            </li>
-            <li>
-              <OptionalHref href={t('footer.linkExp2Href')}>{t('footer.linkExp2')}</OptionalHref>
-            </li>
-            <li>
-              <OptionalHref href={t('footer.linkExp3Href')}>{t('footer.linkExp3')}</OptionalHref>
-            </li>
-            <li>
-              <OptionalHref href={t('footer.linkExp4Href')}>{t('footer.linkExp4')}</OptionalHref>
-            </li>
-          </ul>
         </div>
         <div>
           <h4 className="mb-6 text-label-caps text-slate-900 dark:text-slate-50">
@@ -97,7 +80,7 @@ export function ArchSiteFooter() {
           ) : null}
         </div>
       </div>
-      <div className="mx-auto mt-20 flex max-w-7xl flex-col items-center justify-between gap-4 border-t border-slate-200 px-8 pt-8 text-sm text-body-md text-slate-500 dark:border-slate-800 dark:text-slate-400 md:flex-row">
+      <div className="mx-auto mt-16 flex w-full max-w-5xl flex-col items-center justify-between gap-4 border-t border-slate-200 px-8 pt-8 text-center text-sm text-body-md text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:mt-20 md:flex-row md:text-left lg:max-w-6xl">
         <p>{t('footer.copyright')}</p>
         <div className="flex space-x-6">
           <a className={footerLinkClass} href={t('footer.linkPrivacyHref')}>
